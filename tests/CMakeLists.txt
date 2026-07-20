@@ -14,5 +14,13 @@ add_executable(hibitset_tests
 )
 target_link_libraries(hibitset_tests PRIVATE hibitset::hibitset Catch2::Catch2WithMain)
 
+# test_constexpr.cpp evaluates several U=262144 bitsets at compile time, which
+# exceeds the default constexpr evaluation budget on some compilers.
+target_compile_options(hibitset_tests PRIVATE
+    $<$<CXX_COMPILER_ID:Clang,AppleClang>:-fconstexpr-steps=8000000>
+    $<$<CXX_COMPILER_ID:GNU>:-fconstexpr-ops-limit=100000000>
+    $<$<CXX_COMPILER_ID:MSVC>:/constexpr:steps8000000>
+)
+
 include(Catch)
 catch_discover_tests(hibitset_tests)
