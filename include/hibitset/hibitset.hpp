@@ -368,6 +368,3 @@ public:
     [[nodiscard]] constexpr const_iterator cend() const noexcept { return end(); }
 };
 }
-
-// static_assert(std::forward_iterator<hibitset::bitset<64>::const_iterator>);
-// static_assert(std::ranges::forward_range<hibitset::bitset<64>>);
