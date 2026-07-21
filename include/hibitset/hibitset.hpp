@@ -62,6 +62,47 @@ private:
         assert(idx < U && "hibitset: Index out of range");
     }
 
+    struct find_result { std::size_t pos; std::uint64_t word; };
+
+    [[nodiscard]] constexpr find_result next_set_impl(std::size_t idx) const noexcept {
+        // Iterate through the layers, starting from the lowest layer
+        for (std::size_t i = 0; i < layer_count; ++i) {
+            std::size_t local_chunk_idx = idx >> (6 * (i + 1));
+            std::size_t bit = (idx >> (6 * i)) & 63;
+
+            // Don't include the chunk that contains the index
+            // after the first layer, since it is already handled
+            std::uint64_t chunk = buffer[layer_offsets[i] + local_chunk_idx] &
+                ((i == 0 ? ~0ULL : ~1ULL) << bit);
+
+            if (chunk) {
+                // Traverse down the layers to find the exact index
+                for (std::size_t j = i; j-- > 0;) {
+                    local_chunk_idx = (local_chunk_idx << 6) + std::countr_zero(chunk);
+                    chunk = buffer[layer_offsets[j] + local_chunk_idx];
+                }
+                return {(local_chunk_idx << 6) + std::countr_zero(chunk), chunk};
+            }
+        }
+
+        // Perform a linear search in the top layer
+        for (std::size_t i = (idx >> (6 * layer_count)) + 1; i < layer_sizes[layer_count - 1]; ++i) {
+            std::uint64_t chunk = buffer[layer_offsets[layer_count - 1] + i];
+
+            if (chunk) {
+                // Traverse down the layers to find the exact index
+                std::size_t local_chunk_idx = i;
+                for (std::size_t j = layer_count - 1; j-- > 0;) {
+                    local_chunk_idx = (local_chunk_idx << 6) + std::countr_zero(chunk);
+                    chunk = buffer[layer_offsets[j] + local_chunk_idx];
+                }
+                return {(local_chunk_idx << 6) + std::countr_zero(chunk), chunk};
+            }
+        }
+
+        return {npos, 0};
+    }
+
     /// @brief Recounts the number of set bits in the bitset.
     constexpr void recount() {
         size_ = 0;
@@ -145,43 +186,7 @@ public:
     /// @return The index of the next set bit, or npos if not found.
     [[nodiscard]] constexpr std::size_t next_set(std::size_t idx) const noexcept {
         check_range(idx);
-
-        // Iterate through the layers, starting from the lowest layer
-        for (std::size_t i = 0; i < layer_count; ++i) {
-            std::size_t local_chunk_idx = idx >> (6 * (i + 1));
-            std::size_t bit = (idx >> (6 * i)) & 63;
-
-            // Don't include the chunk that contains the index
-            // after the first layer, since it is already handled
-            std::uint64_t chunk = buffer[layer_offsets[i] + local_chunk_idx] &
-                ((i == 0 ? ~0ULL : ~1ULL) << bit);
-
-            if (chunk) {
-                // Traverse down the layers to find the exact index
-                for (std::size_t j = i; j-- > 0;) {
-                    local_chunk_idx = (local_chunk_idx << 6) + std::countr_zero(chunk);
-                    chunk = buffer[layer_offsets[j] + local_chunk_idx];
-                }
-                return (local_chunk_idx << 6) + std::countr_zero(chunk);
-            }
-        }
-
-        // Perform a linear search in the top layer
-        for (std::size_t i = (idx >> (6 * layer_count)) + 1; i < layer_sizes[layer_count - 1]; ++i) {
-            std::uint64_t chunk = buffer[layer_offsets[layer_count - 1] + i];
-
-            if (chunk) {
-                // Traverse down the layers to find the exact index
-                std::size_t local_chunk_idx = i;
-                for (std::size_t j = layer_count - 1; j-- > 0;) {
-                    local_chunk_idx = (local_chunk_idx << 6) + std::countr_zero(chunk);
-                    chunk = buffer[layer_offsets[j] + local_chunk_idx];
-                }
-                return (local_chunk_idx << 6) + std::countr_zero(chunk);
-            }
-        }
-
-        return npos;
+        return next_set_impl(idx).pos;
     }
 
     /// @brief Finds the previous set bit at or before the given index.
@@ -324,11 +329,18 @@ public:
     private:
         const bitset* parent_ = nullptr;
         std::size_t pos_ = npos;
+        std::size_t chunk_idx_ = 0;
+        std::uint64_t remaining_ = 0;
 
         constexpr const_iterator(
             const bitset* parent,
             std::size_t pos
-        ) noexcept : parent_(parent), pos_(pos) {}
+        ) noexcept : parent_(parent), pos_(pos) {
+            if (pos_ != npos) {
+                chunk_idx_ = pos_ >> 6;
+                remaining_ = parent_->buffer[chunk_idx_] & (~0ULL << (pos_ & 63));
+            }
+        }
 
         friend class bitset;
     public:
@@ -345,7 +357,19 @@ public:
 
         // Pre-increment
         constexpr const_iterator& operator++() noexcept {
-            pos_ = (pos_ + 1 < U) ? parent_->next_set(pos_ + 1) : npos;
+            remaining_ &= remaining_ - 1;
+            if (remaining_) {
+                pos_ = (chunk_idx_ << 6) + std::countr_zero(remaining_);
+            } else if (pos_ + 1 < U) {
+                auto [next_pos, word] = parent_->next_set_impl(pos_ + 1);
+                pos_ = next_pos;
+                if (pos_ != npos) {
+                    chunk_idx_ = pos_ >> 6;
+                    remaining_ = word;
+                }
+            } else {
+                pos_ = npos;
+            }
             return *this;
         }
 
@@ -357,9 +381,11 @@ public:
         }
 
         friend constexpr bool operator==(
-            const const_iterator&,
-            const const_iterator&
-        ) noexcept = default;
+            const const_iterator& a,
+            const const_iterator& b
+        ) noexcept {
+            return a.parent_ == b.parent_ && a.pos_ == b.pos_;
+        }
     };
 
     [[nodiscard]] constexpr const_iterator begin() const noexcept { return const_iterator(this, first()); }
