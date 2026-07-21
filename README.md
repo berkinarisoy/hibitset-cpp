@@ -88,7 +88,7 @@ cmake --build build-bench -j
 
 ### Clear bit time per operation (ns)
 
-| Universe size | Fill density | hibitset (ns/op) | stdset (ns/op) | dynset (ns/op) |
+| Universe size | Fill density | hibitset (ns) | stdset (ns) | dynset (ns) |
 |---|---|---|---|---|
 | 2^12 (4,096) | 5% | 🥈 0.56 | 🥇 0.54 | 🥉 1.08 |
 | 2^12 (4,096) | 50% | 🥈 0.56 | 🥇 0.54 | 🥉 1.07 |
