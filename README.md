@@ -35,7 +35,7 @@ The traditional bitsets find the successor/predecessor of a certain index by per
 In terms of memory, ```hibitset``` uses a fixed $U/8$ bytes for the base layer plus a small overhead (approximately $1.6\%$) for the summary layers, regardless of how many bits are actually set. 
 
 ## Benchmarks
-Benchmark results show that ```hibitset``` provides a significant speedup over ```std::set``` and ```dynset``` in successor/predecessor queries, while staying in a competitive range of memory usage. While ```hibitset``` supports algebraic operations, algebra-heavy applications may prefer ```dynset``` for better performance in set algebra operations.
+Benchmark results show that ```hibitset``` provides a significant speedup over ```std::set``` and ```boost::dynamic_bitset``` (```dynset```) in successor/predecessor queries, while staying in a competitive range of memory usage. While ```hibitset``` supports algebraic operations, algebra-heavy applications may prefer ```dynset``` for better performance in set algebra operations.
 
 The results can be reproduced by running:
 ```sh
