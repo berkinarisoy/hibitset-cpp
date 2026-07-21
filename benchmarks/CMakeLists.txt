@@ -16,7 +16,6 @@ add_executable(hibitset_bench
     bench_mutations.cpp
     bench_iteration.cpp
     bench_algebra.cpp
-    bench_workload.cpp
     bench_construction.cpp
     bench_memory.cpp
 )
