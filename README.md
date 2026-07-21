@@ -5,7 +5,7 @@
 
 A header-only C++20 hierarchical bitset library with fast successor/predecessor queries.
 
-`hibitset::bitset<U>` stores a set of ```uint64_t``` chunks in $[0, U)$ as a flat, multi-layer bitmap. The design is a C++ take on the structure behind Rust's [`hibitset`](https://github.com/amethyst/hibitset), generalized to arbitrary universe sizes with the layer count derived at compile time.
+`hibitset::bitset<U>` stores a set of indices in $[0, U)$ as a flat, multi-layer bitmap. The design is a C++ take on the structure behind Rust's [`hibitset`](https://github.com/amethyst/hibitset), generalized to arbitrary universe sizes with the layer count derived at compile time.
 
 ## Quick demo
 ```cpp
