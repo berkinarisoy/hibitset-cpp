@@ -22,6 +22,18 @@ std::vector<std::size_t> sample_distinct_indices(std::size_t target, std::mt1993
     return pool;
 }
 
+template<std::size_t U, typename Pred>
+std::vector<std::size_t> sample_matching_indices(std::size_t count, std::mt19937& rng, Pred pred) {
+    std::uniform_int_distribution<std::size_t> d(0, U - 1);
+    std::vector<std::size_t> result;
+    result.reserve(count);
+    while (result.size() < count) {
+        std::size_t i = d(rng);
+        if (pred(i)) result.push_back(i);
+    }
+    return result;
+}
+
 // Fixture for benchmarking three different bitset implementations:
 // 1) hibitset::bitset
 // 2) std::set
