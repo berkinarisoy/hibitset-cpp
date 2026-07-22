@@ -37,6 +37,8 @@ In terms of memory, ```hibitset``` uses a fixed $U/8$ bytes for the base layer p
 ## Benchmarks
 Benchmark results show that ```hibitset``` provides a significant speedup over ```std::set``` and ```boost::dynamic_bitset``` (```dynset```) in successor/predecessor queries, while staying in a competitive range of memory usage. While ```hibitset``` supports algebraic operations, algebra-heavy applications may prefer ```dynset``` for better performance in set algebra operations.
 
+The benchmarks are run on Apple M3, Apple Clang 17.0.0, -O3 -DNDEBUG (CMake Release), single-threaded, macOS.
+
 The results can be reproduced by running:
 ```sh
 cmake -B build-bench -S . -DCMAKE_BUILD_TYPE=Release -DHIBITSET_BUILD_BENCHMARKS=ON
@@ -44,132 +46,132 @@ cmake --build build-bench -j
 ./build-bench/benchmarks/hibitset_bench
 ```
 
-### Set bit time per operation (ns)
-
-| Universe size | Fill density | hibitset (ns) | stdset (ns) | dynset (ns) |
-|---|---|---|---|---|
-| 2^12 (4,096) | 5% | 🥇 0.57 | 🥉 43.5 | 🥈 1.08 |
-| 2^12 (4,096) | 50% | 🥇 0.57 | 🥉 43.0 | 🥈 1.08 |
-| 2^12 (4,096) | 95% | 🥇 0.57 | 🥉 42.9 | 🥈 1.08 |
-| 2^18 (262,144) | 5% | 🥇 0.60 | 🥉 89.9 | 🥈 1.12 |
-| 2^18 (262,144) | 50% | 🥇 0.62 | 🥉 104.8 | 🥈 1.08 |
-| 2^18 (262,144) | 95% | 🥇 0.62 | 🥉 126.3 | 🥈 1.09 |
-| 2^24 (16,777,216) | 5% | 🥇 0.83 | 🥉 267.4 | 🥈 1.08 |
-| 2^24 (16,777,216) | 50% | 🥇 0.89 | 🥉 789.7 | 🥈 1.14 |
-| 2^24 (16,777,216) | 95% | 🥇 0.83 | 🥉 895.2 | 🥈 1.10 |
-
 ### Find next set bit time per operation (ns)
 
 | Universe size | Fill density | hibitset (ns) | stdset (ns) | dynset (ns) |
 |---|---|---|---|---|
-| 2^12 (4,096) | 5% | 🥇 1.70 | 🥉 15.6 | 🥈 3.42 |
-| 2^12 (4,096) | 50% | 🥇 0.94 | 🥉 27.2 | 🥈 4.47 |
-| 2^12 (4,096) | 95% | 🥇 0.80 | 🥉 33.4 | 🥈 1.44 |
-| 2^18 (262,144) | 5% | 🥇 1.60 | 🥉 44.9 | 🥈 3.98 |
-| 2^18 (262,144) | 50% | 🥇 0.94 | 🥉 69.6 | 🥈 4.55 |
-| 2^18 (262,144) | 95% | 🥇 0.84 | 🥉 79.4 | 🥈 1.44 |
-| 2^24 (16,777,216) | 5% | 🥇 4.02 | 🥉 138.5 | 🥈 4.55 |
-| 2^24 (16,777,216) | 50% | 🥇 1.51 | 🥉 343.0 | 🥈 5.24 |
-| 2^24 (16,777,216) | 95% | 🥇 1.34 | 🥉 444.0 | 🥈 1.70 |
+| 2^12 (4,096) | 5% | 🥇 1.46 | 🥉 16.5 | 🥈 3.75 |
+| 2^12 (4,096) | 50% | 🥇 0.95 | 🥉 27.8 | 🥈 4.66 |
+| 2^12 (4,096) | 95% | 🥇 0.81 | 🥉 34.4 | 🥈 1.46 |
+| 2^18 (262,144) | 5% | 🥇 1.82 | 🥉 45.0 | 🥈 4.06 |
+| 2^18 (262,144) | 50% | 🥇 0.92 | 🥉 70.9 | 🥈 4.95 |
+| 2^18 (262,144) | 95% | 🥇 0.85 | 🥉 83.8 | 🥈 1.44 |
+| 2^24 (16,777,216) | 5% | 🥇 3.92 | 🥉 149.2 | 🥈 5.13 |
+| 2^24 (16,777,216) | 50% | 🥇 1.53 | 🥉 382.7 | 🥈 5.75 |
+| 2^24 (16,777,216) | 95% | 🥇 1.37 | 🥉 445.7 | 🥈 1.73 |
 
 ### Find previous set bit time per operation (ns)
 
 | Universe size | Fill density | hibitset (ns) | stdset (ns) | dynset (ns) |
 |---|---|---|---|---|
-| 2^12 (4,096) | 5% | 🥇 1.50 | 🥉 28.8 | 🥈 14.9 |
-| 2^12 (4,096) | 50% | 🥇 0.94 | 🥉 41.8 | 🥈 6.99 |
-| 2^12 (4,096) | 95% | 🥇 0.89 | 🥉 50.9 | 🥈 1.17 |
-| 2^18 (262,144) | 5% | 🥇 3.18 | 🥉 67.7 | 🥈 15.4 |
-| 2^18 (262,144) | 50% | 🥇 1.46 | 🥉 92.7 | 🥈 6.91 |
-| 2^18 (262,144) | 95% | 🥈 1.38 | 🥉 105.2 | 🥇 1.19 |
-| 2^24 (16,777,216) | 5% | 🥇 3.93 | 🥉 193.0 | 🥈 18.5 |
-| 2^24 (16,777,216) | 50% | 🥇 1.62 | 🥉 473.2 | 🥈 7.73 |
-| 2^24 (16,777,216) | 95% | 🥇 1.34 | 🥉 511.4 | 🥈 1.51 |
-
-### Clear bit time per operation (ns)
-
-| Universe size | Fill density | hibitset (ns) | stdset (ns) | dynset (ns) |
-|---|---|---|---|---|
-| 2^12 (4,096) | 5% | 🥈 0.56 | 🥇 0.54 | 🥉 1.08 |
-| 2^12 (4,096) | 50% | 🥈 0.56 | 🥇 0.54 | 🥉 1.07 |
-| 2^12 (4,096) | 95% | 🥈 0.57 | 🥇 0.55 | 🥉 1.07 |
-| 2^18 (262,144) | 5% | 🥇 0.60 | 🥉 48.2 | 🥈 1.07 |
-| 2^18 (262,144) | 50% | 🥇 0.60 | 🥉 79.6 | 🥈 1.08 |
-| 2^18 (262,144) | 95% | 🥇 0.61 | 🥉 87.6 | 🥈 1.08 |
-| 2^24 (16,777,216) | 5% | 🥇 0.84 | 🥉 195.1 | 🥈 1.07 |
-| 2^24 (16,777,216) | 50% | 🥇 0.84 | 🥉 741.0 | 🥈 1.07 |
-| 2^24 (16,777,216) | 95% | 🥇 0.82 | 🥉 1,451 | 🥈 1.25 |
+| 2^12 (4,096) | 5% | 🥇 1.51 | 🥉 28.2 | 🥈 14.6 |
+| 2^12 (4,096) | 50% | 🥇 0.89 | 🥉 42.3 | 🥈 7.15 |
+| 2^12 (4,096) | 95% | 🥇 0.80 | 🥉 50.9 | 🥈 1.15 |
+| 2^18 (262,144) | 5% | 🥇 3.18 | 🥉 64.6 | 🥈 15.2 |
+| 2^18 (262,144) | 50% | 🥇 1.43 | 🥉 93.3 | 🥈 7.11 |
+| 2^18 (262,144) | 95% | 🥈 1.34 | 🥉 108.9 | 🥇 1.16 |
+| 2^24 (16,777,216) | 5% | 🥇 3.78 | 🥉 234.0 | 🥈 18.6 |
+| 2^24 (16,777,216) | 50% | 🥇 1.56 | 🥉 467.8 | 🥈 8.40 |
+| 2^24 (16,777,216) | 95% | 🥇 1.35 | 🥉 543.1 | 🥈 1.52 |
 
 ### Iterate over set bits time per element (ns)
 
 | Universe size | Fill density | hibitset (ns) | stdset (ns) | dynset (ns) |
 |---|---|---|---|---|
-| 2^12 (4,096) | 5% | 🥇 1.82 | 🥈 3.15 | 🥉 3.89 |
-| 2^12 (4,096) | 50% | 🥇 0.76 | 🥈 3.30 | 🥉 3.97 |
-| 2^12 (4,096) | 95% | 🥇 0.75 | 🥉 6.81 | 🥈 3.87 |
-| 2^18 (262,144) | 5% | 🥇 2.41 | 🥉 10.5 | 🥈 4.02 |
-| 2^18 (262,144) | 50% | 🥇 0.95 | 🥉 13.9 | 🥈 3.98 |
-| 2^18 (262,144) | 95% | 🥇 0.75 | 🥉 25.8 | 🥈 3.89 |
-| 2^24 (16,777,216) | 5% | 🥇 3.64 | 🥉 114.4 | 🥈 6.05 |
-| 2^24 (16,777,216) | 50% | 🥇 1.23 | 🥉 115.3 | 🥈 3.72 |
-| 2^24 (16,777,216) | 95% | 🥇 1.40 | 🥉 116.4 | 🥈 3.96 |
+| 2^12 (4,096) | 5% | 🥇 1.60 | 🥈 2.49 | 🥉 3.49 |
+| 2^12 (4,096) | 50% | 🥇 0.68 | 🥈 2.60 | 🥉 3.59 |
+| 2^12 (4,096) | 95% | 🥇 0.67 | 🥉 4.85 | 🥈 3.48 |
+| 2^18 (262,144) | 5% | 🥇 2.19 | 🥉 7.92 | 🥈 3.60 |
+| 2^18 (262,144) | 50% | 🥇 0.83 | 🥉 12.3 | 🥈 3.56 |
+| 2^18 (262,144) | 95% | 🥇 0.66 | 🥉 15.8 | 🥈 3.46 |
+| 2^24 (16,777,216) | 5% | 🥇 3.04 | 🥉 60.5 | 🥈 5.13 |
+| 2^24 (16,777,216) | 50% | 🥇 0.86 | 🥉 72.3 | 🥈 3.58 |
+| 2^24 (16,777,216) | 95% | 🥇 0.70 | 🥉 74.7 | 🥈 3.49 |
+
+### Set bit time per operation (ns)
+
+| Universe size | Fill density | hibitset (ns) | stdset (ns) | dynset (ns) |
+|---|---|---|---|---|
+| 2^12 (4,096) | 5% | 🥈 4.39 | 🥉 51.8 | 🥇 4.36 |
+| 2^12 (4,096) | 50% | 🥇 4.53 | 🥉 54.4 | 🥈 4.65 |
+| 2^12 (4,096) | 95% | 🥈 6.23 | 🥉 48.5 | 🥇 6.21 |
+| 2^18 (262,144) | 5% | 🥈 4.53 | 🥉 77.9 | 🥇 4.22 |
+| 2^18 (262,144) | 50% | 🥇 4.30 | 🥉 121.0 | 🥈 4.61 |
+| 2^18 (262,144) | 95% | 🥇 4.43 | 🥉 138.7 | 🥈 4.43 |
+| 2^24 (16,777,216) | 5% | 🥈 4.63 | 🥉 153.6 | 🥇 4.40 |
+| 2^24 (16,777,216) | 50% | 🥇 4.34 | 🥉 241.3 | 🥈 4.36 |
+| 2^24 (16,777,216) | 95% | 🥇 4.53 | 🥉 540.9 | 🥈 4.71 |
+
+### Clear bit time per operation (ns)
+
+| Universe size | Fill density | hibitset (ns) | stdset (ns) | dynset (ns) |
+|---|---|---|---|---|
+| 2^12 (4,096) | 5% | 🥇 6.81 | 🥉 52.3 | 🥈 6.82 |
+| 2^12 (4,096) | 50% | 🥈 5.01 | 🥉 72.2 | 🥇 4.45 |
+| 2^12 (4,096) | 95% | 🥈 4.50 | 🥉 80.8 | 🥇 4.32 |
+| 2^18 (262,144) | 5% | 🥇 4.81 | 🥉 113.0 | 🥈 5.09 |
+| 2^18 (262,144) | 50% | 🥈 5.07 | 🥉 160.6 | 🥇 4.16 |
+| 2^18 (262,144) | 95% | 🥈 4.76 | 🥉 174.1 | 🥇 4.14 |
+| 2^24 (16,777,216) | 5% | 🥈 5.42 | 🥉 301.4 | 🥇 4.39 |
+| 2^24 (16,777,216) | 50% | 🥇 4.46 | 🥉 322.1 | 🥈 4.68 |
+| 2^24 (16,777,216) | 95% | 🥈 4.47 | 🥉 314.0 | 🥇 4.10 |
 
 ### AND time per operation (ns)
 
 | Universe size | Fill density | hibitset (ns) | stdset (ns) | dynset (ns) |
 |---|---|---|---|---|
-| 2^12 (4,096) | 5% | 🥈 58.5 | 🥉 3,908 | 🥇 8.11 |
-| 2^12 (4,096) | 50% | 🥈 73.9 | 🥉 105,985 | 🥇 8.43 |
-| 2^12 (4,096) | 95% | 🥈 53.0 | 🥉 450,162 | 🥇 8.42 |
-| 2^18 (262,144) | 5% | 🥈 7,793 | 🥉 603,685 | 🥇 514.9 |
-| 2^18 (262,144) | 50% | 🥈 10,307 | 🥉 21,436,333 | 🥇 510.1 |
-| 2^18 (262,144) | 95% | 🥈 10,286 | 🥉 65,243,000 | 🥇 494.3 |
-| 2^24 (16,777,216) | 5% | 🥈 455,309 | 🥉 152,724,000 | 🥇 53,548 |
-| 2^24 (16,777,216) | 50% | 🥈 609,231 | 🥉 2,163,954,000 | 🥇 52,856 |
-| 2^24 (16,777,216) | 95% | 🥈 914,573 | 🥉 4,965,341,000 | 🥇 61,855 |
+| 2^12 (4,096) | 5% | 🥈 51.6 | 🥉 2,457 | 🥇 7.12 |
+| 2^12 (4,096) | 50% | 🥈 35.9 | 🥉 66,933 | 🥇 7.01 |
+| 2^12 (4,096) | 95% | 🥈 35.9 | 🥉 251,416 | 🥇 7.01 |
+| 2^18 (262,144) | 5% | 🥈 6,994 | 🥉 236,871 | 🥇 417.6 |
+| 2^18 (262,144) | 50% | 🥈 8,958 | 🥉 9,500,833 | 🥇 417.0 |
+| 2^18 (262,144) | 95% | 🥈 8,964 | 🥉 31,829,500 | 🥇 417.1 |
+| 2^24 (16,777,216) | 5% | 🥈 387,865 | 🥉 90,221,000 | 🥇 45,770 |
+| 2^24 (16,777,216) | 50% | 🥈 576,934 | 🥉 1,569,192,000 | 🥇 46,475 |
+| 2^24 (16,777,216) | 95% | 🥈 578,616 | 🥉 4,136,211,000 | 🥇 46,012 |
 
 ### OR time per operation (ns)
 ```hibitset``` is better at OR than AND and XOR because the resulting summary layers can be trivially computed from the summary layers of the operands, while AND and XOR require a rebuild of the summary layers from the base layer.
 
 | Universe size | Fill density | hibitset (ns) | stdset (ns) | dynset (ns) |
 |---|---|---|---|---|
-| 2^12 (4,096) | 5% | 🥈 16.6 | 🥉 21,425 | 🥇 11.2 |
-| 2^12 (4,096) | 50% | 🥈 16.9 | 🥉 215,114 | 🥇 11.1 |
-| 2^12 (4,096) | 95% | 🥈 17.7 | 🥉 314,589 | 🥇 11.5 |
-| 2^18 (262,144) | 5% | 🥈 1,287 | 🥉 2,309,032 | 🥇 727.1 |
-| 2^18 (262,144) | 50% | 🥈 1,210 | 🥉 30,040,000 | 🥇 664.7 |
-| 2^18 (262,144) | 95% | 🥈 1,361 | 🥉 54,064,000 | 🥇 675.2 |
-| 2^24 (16,777,216) | 5% | 🥈 96,490 | 🥉 317,026,000 | 🥇 52,928 |
-| 2^24 (16,777,216) | 50% | 🥈 120,048 | 🥉 3,264,369,000 | 🥇 53,268 |
-| 2^24 (16,777,216) | 95% | 🥈 90,832 | 🥉 6,464,307,000 | 🥇 53,183 |
+| 2^12 (4,096) | 5% | 🥈 13.3 | 🥉 19,372 | 🥇 7.22 |
+| 2^12 (4,096) | 50% | 🥈 13.2 | 🥉 193,502 | 🥇 7.07 |
+| 2^12 (4,096) | 95% | 🥈 13.2 | 🥉 274,056 | 🥇 7.38 |
+| 2^18 (262,144) | 5% | 🥈 970.9 | 🥉 2,024,000 | 🥇 419.4 |
+| 2^18 (262,144) | 50% | 🥈 979.6 | 🥉 22,428,667 | 🥇 420.9 |
+| 2^18 (262,144) | 95% | 🥈 980.2 | 🥉 35,328,000 | 🥇 418.2 |
+| 2^24 (16,777,216) | 5% | 🥈 82,102 | 🥉 270,159,000 | 🥇 46,146 |
+| 2^24 (16,777,216) | 50% | 🥈 82,350 | 🥉 2,623,463,000 | 🥇 55,512 |
+| 2^24 (16,777,216) | 95% | 🥈 81,664 | 🥉 4,372,417,000 | 🥇 46,342 |
 
 ### XOR time per operation (ns)
 
 | Universe size | Fill density | hibitset (ns) | stdset (ns) | dynset (ns) |
 |---|---|---|---|---|
-| 2^12 (4,096) | 5% | 🥈 50.4 | 🥉 20,877 | 🥇 8.08 |
-| 2^12 (4,096) | 50% | 🥈 49.4 | 🥉 137,560 | 🥇 8.28 |
-| 2^12 (4,096) | 95% | 🥈 50.4 | 🥉 44,167 | 🥇 8.54 |
-| 2^18 (262,144) | 5% | 🥈 11,107 | 🥉 2,285,156 | 🥇 516.6 |
-| 2^18 (262,144) | 50% | 🥈 10,783 | 🥉 23,142,667 | 🥇 521.6 |
-| 2^18 (262,144) | 95% | 🥈 10,553 | 🥉 21,292,333 | 🥇 513.8 |
-| 2^24 (16,777,216) | 5% | 🥈 685,340 | 🥉 329,951,000 | 🥇 54,458 |
-| 2^24 (16,777,216) | 50% | 🥈 673,337 | 🥉 2,476,673,000 | 🥇 50,362 |
-| 2^24 (16,777,216) | 95% | 🥈 638,207 | 🥉 2,333,249,000 | 🥇 71,858 |
+| 2^12 (4,096) | 5% | 🥈 35.3 | 🥉 18,597 | 🥇 7.05 |
+| 2^12 (4,096) | 50% | 🥈 36.0 | 🥉 119,992 | 🥇 7.02 |
+| 2^12 (4,096) | 95% | 🥈 36.0 | 🥉 36,276 | 🥇 7.01 |
+| 2^18 (262,144) | 5% | 🥈 8,803 | 🥉 1,872,135 | 🥇 417.6 |
+| 2^18 (262,144) | 50% | 🥈 8,958 | 🥉 14,533,750 | 🥇 416.8 |
+| 2^18 (262,144) | 95% | 🥈 8,957 | 🥉 11,637,000 | 🥇 417.3 |
+| 2^24 (16,777,216) | 5% | 🥈 561,484 | 🥉 262,352,000 | 🥇 45,802 |
+| 2^24 (16,777,216) | 50% | 🥈 585,361 | 🥉 2,088,303,000 | 🥇 45,800 |
+| 2^24 (16,777,216) | 95% | 🥈 591,437 | 🥉 1,822,287,000 | 🥇 45,969 |
 
 ### Total initialization time (ns)
 
 | Universe size | Fill density | hibitset (ns) | stdset (ns) | dynset (ns) |
 |---|---|---|---|---|
-| 2^12 (4,096) | 5% | 🥈 188.1 | 🥉 7,552 | 🥇 124.8 |
-| 2^12 (4,096) | 50% | 🥈 1,217 | 🥉 101,205 | 🥇 907.6 |
-| 2^12 (4,096) | 95% | 🥈 2,293 | 🥉 233,352 | 🥇 1,677 |
-| 2^18 (262,144) | 5% | 🥈 14,583 | 🥉 1,311,400 | 🥇 6,067 |
-| 2^18 (262,144) | 50% | 🥈 79,776 | 🥉 20,280,333 | 🥇 53,628 |
-| 2^18 (262,144) | 95% | 🥈 157,660 | 🥉 47,186,000 | 🥇 100,315 |
-| 2^24 (16,777,216) | 5% | 🥈 2,690,556 | 🥉 383,574,000 | 🥇 746,989 |
-| 2^24 (16,777,216) | 50% | 🥈 10,348,833 | 🥉 8,799,128,000 | 🥇 8,256,667 |
-| 2^24 (16,777,216) | 95% | 🥈 18,000,000 | 🥉 19,840,866,000 | 🥇 15,695,000 |
+| 2^12 (4,096) | 5% | 🥈 171.1 | 🥉 6,489 | 🥇 106.8 |
+| 2^12 (4,096) | 50% | 🥈 1,050 | 🥉 89,691 | 🥇 744.1 |
+| 2^12 (4,096) | 95% | 🥈 1,907 | 🥉 266,793 | 🥇 1,475 |
+| 2^18 (262,144) | 5% | 🥈 11,503 | 🥉 1,134,759 | 🥇 5,147 |
+| 2^18 (262,144) | 50% | 🥈 64,450 | 🥉 17,942,500 | 🥇 45,953 |
+| 2^18 (262,144) | 95% | 🥈 129,105 | 🥉 38,129,500 | 🥇 87,837 |
+| 2^24 (16,777,216) | 5% | 🥈 2,053,727 | 🥉 236,304,000 | 🥇 642,863 |
+| 2^24 (16,777,216) | 50% | 🥈 8,438,500 | 🥉 6,531,067,000 | 🥇 6,579,800 |
+| 2^24 (16,777,216) | 95% | 🥈 14,887,800 | 🥉 14,431,485,000 | 🥇 14,314,800 |
 
 ### Memory usage
 ```hibitset``` gains major query speedups while staying in a competitive range of ```dynset``` in memory usage.
@@ -243,16 +245,31 @@ You can vendor the header file `include/hibitset/hibitset.hpp` into your project
 | ```operator\|=```, ```operator&=```, ```operator^=``` | performs bitwise OR, AND, XOR in-place |
 | ```operator\|```, ```operator&```, ```operator^``` | performs bitwise OR, AND, XOR and returns a new bitset |
 | ```npos``` | returns a sentinel value for "not found" |
-| ```begin```, ```end``` | returns iterators to the first and one-past-the-last set bits |
-| ```cbegin```, ```cend``` | returns const iterators to the first and one-past-the-last set bits |
+| ```begin```, ```end``` | returns iterators to the first and one-past-the-last set bits (npos if none) |
+| ```cbegin```, ```cend``` | returns const iterators to the first and one-past-the-last set bits (npos if none) |
+
+## Correctness
+```hibitset``` has been fuzz-tested with the ```std::set``` as an oracle, along with a set of unit tests that cover the API. The tests can be run by executing:
+```sh
+cmake -B build-debug -S .
+cmake --build build-debug -j
+ctest --test-dir "build-debug" --output-on-failure
+```
 
 ## Behind the scenes
 ```
-U = 4096, 2 layers, set bits = {1, 65, 4095}
---------------------------------------------------------------
-Layer 1: 1 -----  1 -----  0 -----  ...  0 -----  1 -----
-Layer 0: 0...010  0...010  0...000  ...  0...000  10...00
-         chunk 0  chunk 1  chunk 2  ...  chunk 62 chunk 63
---------------------------------------------------------------
+Example with U = 2^8, chunk_size = 4:
+Layer 3: 1------------------------------------------------ ...
+Layer 2: 1------------------ 1------------------ 0-------- ...
+Layer 1: 1--- 0--- 0--- 0--- 1--- 0--- 1--- 0--- 0--- 0--- ...
+Layer 0: 0010 0000 0000 0000 0011 0000 1111 0000 0000 0000 ...
 ```
-In the example above, the base layer (layer 0) is a flat bitmap of $64$ chunks and the summary layer (layer 1) consists of a single chunk, where each chunk is a ```uint64_t``` that represents 64 bits. The higher layers are summary layers that indicate whether any bits are set in the corresponding chunks of the lower layer. When we call ```next_set(2)```, the algorithm first checks whether the chunk containing index 2 (chunk 0) has any set bits at or after index 2 by looking at layer 0. Since only the first bit of chunk 0 is set, it ascends to layer 1 and check whether any bits are set in the chunks after chunk 0. It finds that chunk 1 has a set bit, so it descends back to layer 0 and finds the next set bit at index 65. Same process happens for ```next_set(66)```, where it finds the next set bit at index 4095. Instead of scanning through all the bits in layer 0, the algorithm can skip over the chunks that don't have any set bits by using the summary layers. For large universe sizes, the algorithm can ascend to higher layers and skip over many chunks, making these queries very efficient.
+
+In the real implementation each chunk is a ```uint64_t``` (64 bits) (the diagram above shrinks that to 4 bits per chunk for demonstration). The base layer (layer 0) holds the actual bits, with set bits at indices $\{1, 16, 17, 24, 25, 26, 27\}$. Each layer above summarizes the layer below it:
+- Layer 1's bit $i$ is 1 iff any of layer 0's bits in chunk $i$ are set.
+- Layer 2's bit $i$ is 1 iff any of layer 1's bits in chunk $i$ are set.
+- Layer 3's bit $i$ is 1 iff any of layer 2's bits in chunk $i$ are set.
+
+When we call ```next_set(2)```, the algorithm checks chunk 0 in layer 0 for a set bit at or after index 2. Since chunk 0's only set bit is index 1, it ascends to layer 1 looking past chunk 0's position, but bits 1–3 are all 0, so it ascends again to layer 2's bit 0, which only covers that same empty span. Moving to layer 2's bit 1, it finds a 1, descends into layer 1's bits 4–7, finds bit 4 set, descends once more into layer 0's chunk 4 (```0011```), and returns its lowest set bit, index 16. Instead of scanning every chunk in between, the algorithm skipped straight from chunk 0 to chunk 4 by climbing to the layer where that gap is summarized by a single 0.
+
+For a real $U$ with 64-bit chunks, this ascend/descend pattern spans at most $\log_{64} U$ layers, which is why the worst case for ```next_set```/```prev_set``` is $O(\log_{64} U)$ regardless of how sparse or clustered the set bits are.
