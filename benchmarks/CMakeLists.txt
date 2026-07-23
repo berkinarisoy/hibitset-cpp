@@ -13,7 +13,6 @@ get_target_property(Boost_INCLUDE_DIRS Boost::headers INTERFACE_INCLUDE_DIRECTOR
 
 add_executable(hibitset_bench
     bench_queries.cpp
-    bench_mutations.cpp
     bench_iteration.cpp
     bench_algebra.cpp
     bench_construction.cpp
