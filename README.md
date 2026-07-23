@@ -32,7 +32,7 @@ Since all operations are ```constexpr```, the whole structure can be built and q
 ## Why ```hibitset```?
 The traditional bitsets find the successor/predecessor of a certain index by performing a linear scan, which is computationally unfeasible for applications that have large universe sizes and require fast iteration. ```hibitset``` solves this problem by creating summary layers that allows the set to skip chunks that doesn't contain any set bits. In the worst case scenario, finding the next/prev set bit will require an ascend and descend through $O(\log_{64} U)$ layers, along with a linear scan on the highest layer of size $O(64)$.
 
-In terms of memory, ```hibitset``` uses a fixed $U/8$ bytes for the base layer plus a small overhead (approximately $1.6\%$) for the summary layers, regardless of how many bits are actually set. 
+In terms of memory, ```hibitset``` uses a fixed $U/8$ bytes for the base layer plus a small overhead (approximately 1.6%) for the summary layers, regardless of how many bits are actually set. 
 
 ## Benchmarks
 Benchmark results show that ```hibitset``` provides a significant speedup over ```std::set``` and ```boost::dynamic_bitset``` (```dynset```) in successor/predecessor queries, while staying in a competitive range of memory usage. While ```hibitset``` supports algebraic operations, algebra-heavy applications may prefer ```dynset``` for better performance in set algebra operations.
@@ -87,34 +87,6 @@ cmake --build build-bench -j
 | 2^24 (16,777,216) | 5% | 🥇 3.04 | 🥉 60.5 | 🥈 5.13 |
 | 2^24 (16,777,216) | 50% | 🥇 0.86 | 🥉 72.3 | 🥈 3.58 |
 | 2^24 (16,777,216) | 95% | 🥇 0.70 | 🥉 74.7 | 🥈 3.49 |
-
-### Set bit time per operation (ns)
-
-| Universe size | Fill density | hibitset (ns) | stdset (ns) | dynset (ns) |
-|---|---|---|---|---|
-| 2^12 (4,096) | 5% | 🥈 4.39 | 🥉 51.8 | 🥇 4.36 |
-| 2^12 (4,096) | 50% | 🥇 4.53 | 🥉 54.4 | 🥈 4.65 |
-| 2^12 (4,096) | 95% | 🥈 6.23 | 🥉 48.5 | 🥇 6.21 |
-| 2^18 (262,144) | 5% | 🥈 4.53 | 🥉 77.9 | 🥇 4.22 |
-| 2^18 (262,144) | 50% | 🥇 4.30 | 🥉 121.0 | 🥈 4.61 |
-| 2^18 (262,144) | 95% | 🥇 4.43 | 🥉 138.7 | 🥈 4.43 |
-| 2^24 (16,777,216) | 5% | 🥈 4.63 | 🥉 153.6 | 🥇 4.40 |
-| 2^24 (16,777,216) | 50% | 🥇 4.34 | 🥉 241.3 | 🥈 4.36 |
-| 2^24 (16,777,216) | 95% | 🥇 4.53 | 🥉 540.9 | 🥈 4.71 |
-
-### Clear bit time per operation (ns)
-
-| Universe size | Fill density | hibitset (ns) | stdset (ns) | dynset (ns) |
-|---|---|---|---|---|
-| 2^12 (4,096) | 5% | 🥇 6.81 | 🥉 52.3 | 🥈 6.82 |
-| 2^12 (4,096) | 50% | 🥈 5.01 | 🥉 72.2 | 🥇 4.45 |
-| 2^12 (4,096) | 95% | 🥈 4.50 | 🥉 80.8 | 🥇 4.32 |
-| 2^18 (262,144) | 5% | 🥇 4.81 | 🥉 113.0 | 🥈 5.09 |
-| 2^18 (262,144) | 50% | 🥈 5.07 | 🥉 160.6 | 🥇 4.16 |
-| 2^18 (262,144) | 95% | 🥈 4.76 | 🥉 174.1 | 🥇 4.14 |
-| 2^24 (16,777,216) | 5% | 🥈 5.42 | 🥉 301.4 | 🥇 4.39 |
-| 2^24 (16,777,216) | 50% | 🥇 4.46 | 🥉 322.1 | 🥈 4.68 |
-| 2^24 (16,777,216) | 95% | 🥈 4.47 | 🥉 314.0 | 🥇 4.10 |
 
 ### AND time per operation (ns)
 
